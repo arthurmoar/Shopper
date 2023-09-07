@@ -1,9 +1,9 @@
 
-DROP DATABASE IF EXISTS trybecardb;
-CREATE DATABASE shoṕperdb;
+DROP DATABASE IF EXISTS shopperdb;
+CREATE DATABASE shopperdb;
 
 -- Usando o banco trybecashdb
-USE shoṕperdb;
+USE shopperdb;
 
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS packs;
