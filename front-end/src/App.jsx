@@ -1,10 +1,13 @@
 import { Outlet } from "react-router-dom"
+import Provider from "./context/Provider"
 
 function App() {
 
   return (
     <>
-      <Outlet />
+      <Provider>
+        <Outlet />
+      </Provider>
     </>
   )
 }

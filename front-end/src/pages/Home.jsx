@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import { enviarDadosAoBackend, requestProducts } from '../services/requests';
+import Context from '../context/Context';
+import ProductCard from '../components/ProductCard';
 
 function Home() {
-  const [csvData, setCsvData] = useState(null);
-  const [productInfoArray, setProductInfoArray] = useState([]);
+  const { csvData, setCsvData } = useContext(Context);
+  const { setDataCsv } = useContext(Context);
+  const { productInfoArray, setProductInfoArray } = useContext(Context);
 
   const handleFileChange = ({ target }) => {
     const file = target.files[0];
@@ -33,13 +36,12 @@ function Home() {
         for (let j = 0; j < headers.length; j++) {
           const key = headers[j].trim().replace(/"/g, '');
           const value = values[j].trim().replace(/"/g, '');
-  
           rowObject[key] = value;
         }
   
         jsonData.push(rowObject);
         }
-  
+      setDataCsv(jsonData);
       return jsonData;
     }
   };
@@ -51,6 +53,7 @@ function Home() {
       enviarDadosAoBackend(jsonData)
         .then((response) => {
           console.log('Resposta do servidor:', response.productUpdate);
+          return response.productUpdate;
         })
         .catch((error) => {
           console.error('Erro ao enviar os dados ao servidor:', error);
@@ -59,11 +62,13 @@ function Home() {
   };
 
   const fetchAllProducts = () => {
-    const jsonData = convertCsvToJson()
+    const jsonData = convertCsvToJson();
+    console.log(jsonData);
     requestProducts(jsonData)
       .then((response) => {
         console.log('Produtos do banco de dados:', response);
-        setProductInfoArray(response);
+        const extractedData = response.map((product) => product.product.data);
+        setProductInfoArray(extractedData);
       })
       .catch((error) => {
         console.error('Erro ao buscar produtos no banco de dados:', error);
@@ -77,13 +82,26 @@ function Home() {
         <button onClick={sendData}>Atualizar</button>
         <button onClick={fetchAllProducts}>Validar</button>
         <div>
-          <ul>
-          {productInfoArray.map((productInfo, index) => (
-            <li key={index}>
-              
-            </li>
-          ))}
-          </ul>
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Cost Price</th>
+                <th>Sales Price</th>
+                <th>New Price</th>
+              </tr>
+            </thead>
+              {
+                productInfoArray.map((product, index) => (
+                  <ProductCard
+                    key={ index }
+                    product={ product }
+                    i = {index + 1}
+                  />
+                ))
+              }
+          </table>
         </div>
       </div>
       <div>

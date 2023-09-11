@@ -4,7 +4,7 @@ const BASE_URL = 'http://localhost:3002';
 
 export const enviarDadosAoBackend = (jsonData) => {
   for (const item of jsonData) {
-    const url = `${BASE_URL}/products/:product_code`;
+    const url = `${BASE_URL}/products/${item.product_code}`;
     console.log(jsonData);
     return axios.patch(url, item, {
       headers: {
